@@ -1,0 +1,8 @@
+xpopsize 4096
+ypopsize 1024
+crossrate 0.5
+mutamount 5
+mutprob 0.2
+gennew true
+drawpop false
+squares 30
