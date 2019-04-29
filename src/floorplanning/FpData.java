@@ -15,8 +15,8 @@ import java.util.Random;
  */
 public class FpData extends IndData {
 
-    float[] width;
-    float[] height;
+    int[] width;
+    int[] height;
     int scWidth;
     int scHeight;
 
@@ -27,8 +27,8 @@ public class FpData extends IndData {
         
         int squares = cfg.reg.getInt("squares")[0];
 
-        width = new float[squares];
-        height = new float[squares];
+        width = new int[squares];
+        height = new int[squares];
         Random rnd = new Random();
 
         for (int i = 0; i < squares; i++) {
