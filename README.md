@@ -1,8 +1,8 @@
 # floor-planning
-Program that creates random 2D rectangles and tries to minimise surface of their bounding box by cellular evolution algorithm.
+Program that creates random 2D rectangles and tries to minimize surface of their bounding box by cellular evolution algorithm.
 
 ### Prerequisites
-Requires cellular evolution Library to work: 
+Requires cellular evolution library to work: 
 https://github.com/missingno7/cellular-evolution
 
 ### Example output
