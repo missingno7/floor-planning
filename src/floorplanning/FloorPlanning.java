@@ -23,10 +23,12 @@ public class FloorPlanning {
 
         String indPath = "out\\";
 
-        PopConfig cfg = new PopConfig();
+        PopConfig cfg = PopConfig.getInstance();
 
-        // Custom parameter - number of squares
+        // Custom parameter
         cfg.reg.newInt("squares");
+        cfg.reg.newFloat("flipprob");
+        cfg.reg.newFloat("switchprob");
 
         cfg.LoadConfig("config.txt");
 
@@ -48,16 +50,12 @@ public class FloorPlanning {
 
                 bestOne = (FpIndividual) bestInd.clone();
 
-                
-
                     bestOne.Draw(tstData, indPath + "ALLBEST" + ".png");
                     bestInd.Draw(tstData, indPath + "IGEN" + Integer.toString(pop.getGen()) + ".png");
 
                     if (cfg.drawpop) {
                         pop.paintPop(indPath + "GEN" + Integer.toString(pop.getGen()) + ".png");
                     }
-                
-
             }
 
             System.out.println("GENERATION " + pop.getGen());

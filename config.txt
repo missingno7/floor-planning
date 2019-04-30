@@ -1,8 +1,10 @@
-xpopsize 1024
-ypopsize 1024
+xpopsize 128
+ypopsize 128
 crossrate 0.5
 mutamount 5
 mutprob 0.2
+flipprob 0.04
+switchprob 0.04
 gennew true
 drawpop true
 squares 30

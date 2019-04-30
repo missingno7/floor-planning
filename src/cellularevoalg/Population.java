@@ -274,7 +274,7 @@ public class Population {
     public Individual getBest() {
         Individual best = m_currGenInds[0];
 
-        for (int i = 0; i < m_currGenInds.length; i++) {
+        for (int i = 1; i < m_currGenInds.length; i++) {
 
             if (best.fitness < m_currGenInds[i].fitness) {
                 best = m_currGenInds[i];
@@ -321,6 +321,23 @@ public class Population {
         float min = 0;*/
         float diff = max - min;
 
+        
+         float max_x=m_currGenInds[0].colX;
+         float min_x=m_currGenInds[0].colX;
+         
+         float max_y=m_currGenInds[0].colY;
+         float min_y=m_currGenInds[0].colY;
+         
+         for (int i = 1; i < m_currGenInds.length; i++) {
+            if(m_currGenInds[i].colX>max_x)max_x=m_currGenInds[i].colX;
+            if(m_currGenInds[i].colY>max_y)max_y=m_currGenInds[i].colY;
+            if(m_currGenInds[i].colX<min_x)min_x=m_currGenInds[i].colX;
+            if(m_currGenInds[i].colY<min_y)min_y=m_currGenInds[i].colY;
+         }
+          float diff_x = max_x - min_x;
+          float diff_y = max_y - min_y;
+        
+        
         BufferedImage image = new BufferedImage(m_popWidth, m_popHeight, BufferedImage.TYPE_INT_RGB);
         int width = image.getWidth();
         int height = image.getHeight();
@@ -332,11 +349,14 @@ public class Population {
             int yy = i % height;
 
             int[] pixels = raster.getPixel(xx, yy, (int[]) null);
-            int pixcol = (int) (((m_currGenInds[i].fitness - min) * 100) / diff);
-
-            lab[0] = pixcol;
-            lab[1] = (int) (m_currGenInds[i].colX * 255f);
-            lab[2] = (int) (m_currGenInds[i].colY * 255f);
+            int pix_intensity = (int) (((m_currGenInds[i].fitness - min) * 100) / diff);
+            int pix_color_x = (int) (((m_currGenInds[i].colX - min_x) * 100) / diff_x);
+            int pix_color_y = (int) (((m_currGenInds[i].colY - min_y) * 100) / diff_y);
+            
+                      
+            lab[0] = pix_intensity;
+            lab[1] = pix_color_x-50;
+            lab[2] = pix_color_y-50;
 
             Other.LABtoRGB(lab, pixels);
 

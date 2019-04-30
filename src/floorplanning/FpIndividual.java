@@ -8,6 +8,7 @@ package floorplanning;
 import cellularevoalg.IndData;
 import cellularevoalg.Individual;
 import cellularevoalg.Other;
+import cellularevoalg.PopConfig;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -34,6 +35,14 @@ public class FpIndividual extends Individual {
             genom_[i] = new Rectangle();
             x_sorted_[i] = i;
         }
+        
+                // Expensive operation, will be called only once
+        if (!init_) {
+            flip_prob_ = PopConfig.getInstance().reg.getFloat("flipprob")[0];
+            switch_prob_ = PopConfig.getInstance().reg.getFloat("switchprob")[0];
+            init_ = true;
+        }
+        
     }
 
     @Override
@@ -129,12 +138,12 @@ public class FpIndividual extends Individual {
             }
 
             // Flip
-            if (rnd.nextFloat() < probability / 5) {
+            if (rnd.nextFloat() < flip_prob_) {
                 genom_[i].flip();
             }
 
             //Switch
-            if (rnd.nextFloat() < probability / 5) {
+            if (rnd.nextFloat() < switch_prob_) {
                 int sw = Other.nextInt(rnd, 0, genom_.length - 1);
 
                 int tmpx = genom_[i].x1 - genom_[sw].x1;
@@ -289,23 +298,15 @@ public class FpIndividual extends Individual {
         colX = 0;
         colY = 0;
 
-        float cX, cY;
         for (int i = 0; i < genom_.length; i++) {
-
-            cX = (float) genom_[i].x1 / (float) scWidth;
-            cY = (float) genom_[i].y1 / (float) scHeight;
-
             if (i % 2 == 0) {
-                colX += cX;
-                colY += cY;
+                colX += genom_[i].x1;
+                colY += genom_[i].y1;
             } else {
-                colX -= cX;
-                colY -= cY;
+                colX -= genom_[i].x1;
+                colY -= genom_[i].y1;
             }
         }
-
-        colX = Other.tanh(colX / genom_.length);
-        colY = Other.tanh(colY / genom_.length);
     }
 
     @Override
@@ -381,4 +382,8 @@ public class FpIndividual extends Individual {
 
     Rectangle[] genom_;
     int[] x_sorted_;
+    
+    private static boolean init_;
+    private static float flip_prob_;
+    private static float switch_prob_;
 }

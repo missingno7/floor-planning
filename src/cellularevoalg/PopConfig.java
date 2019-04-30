@@ -27,11 +27,21 @@ public class PopConfig {
         reg = new VariReg();
     }
 
+    // static method to create instance of Singleton class 
+    public static PopConfig getInstance() 
+    { 
+        if (single_instance == null) 
+            single_instance = new PopConfig(); 
+  
+        return single_instance; 
+    } 
+    
+    /*
     // For backwards compatibility
-    public PopConfig(String filename) {
+    public void initialize(String filename) {
         reg = new VariReg();
         LoadConfig(filename);
-    }
+    }*/
 
     public void LoadConfig(String filename) {
         String line = "";
@@ -157,4 +167,8 @@ public class PopConfig {
     public float mutamount, mutprob, crossrate;
     public int cores;
     public boolean gennew, drawpop;
+    
+    // static variable single_instance of type Singleton 
+    private static PopConfig single_instance = null; 
+    
 }
