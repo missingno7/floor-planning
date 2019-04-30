@@ -77,7 +77,6 @@ public class FpIndividual extends Individual {
                 if (attempts < 10000) {
                     for (int j = 0; j < i; j++) {
                         if (overlap2D(genom_[i].x1, genom_[i].y1, genom_[i].x2, genom_[i].y2, genom_[j].x1, genom_[j].y1, genom_[j].x2, genom_[j].y2)) {
-                            //System.out.println("("+x[i]+","+ y[i]+"-"+ absX[i]+","+ absY[i]+"),("+ x[j]+","+ y[j]+"-"+ absX[j]+","+ absY[j]+")");
                             again = true;
                             attempts++;
                         }
@@ -91,31 +90,27 @@ public class FpIndividual extends Individual {
     }
 
     @Override
-    public Individual fromFile(String filename
-    ) {
+    public Individual fromFile(String filename) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void toFile(String filename
-    ) {
+    public void toFile(String filename) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void mutate(float amount, float probability, Random rnd
-    ) {
+    public void mutate(float amount, float probability, Random rnd) {
         for (int i = 0; i < genom_.length; i++) {
-            //if (rnd.nextFloat() < mutprob) {
+            
+            // Move
             if (rnd.nextFloat() < probability) {
 
                 float mutX = (float) rnd.nextGaussian() * amount;
 
                 if (genom_[i].x1 + mutX >= scWidth || genom_[i].x1 + mutX < 0) {
-
                     genom_[i].x1 -= mutX;
                     genom_[i].x2 -= mutX;
-                    
                 } else {
                     genom_[i].x1 += mutX;
                     genom_[i].x2 += mutX;
@@ -133,13 +128,12 @@ public class FpIndividual extends Individual {
                 }
             }
 
-            //if (rnd.nextFloat() < mutprobflip) {
+            // Flip
             if (rnd.nextFloat() < probability / 5) {
                 genom_[i].flip();
             }
 
             //Switch
-            //if (rnd.nextFloat() < mutprobswitch) {
             if (rnd.nextFloat() < probability / 5) {
                 int sw = Other.nextInt(rnd, 0, genom_.length - 1);
 
@@ -170,13 +164,11 @@ public class FpIndividual extends Individual {
 
     @Override
     public void crossoverTo(Individual secondOne, Individual ind,
-            Random rnd
-    ) {
+            Random rnd) {
         FpIndividual cInd = (FpIndividual) ind;
         FpIndividual cSecondOne = (FpIndividual) secondOne;
 
         for (int i = 0; i < genom_.length; i++) {
-
             if (rnd.nextBoolean()) {
                 cInd.genom_[i].x1 = genom_[i].x1;
                 cInd.genom_[i].x2 = genom_[i].x2;
@@ -187,7 +179,6 @@ public class FpIndividual extends Individual {
                 cInd.genom_[i].x2 = cSecondOne.genom_[i].x2;
                 cInd.genom_[i].y1 = cSecondOne.genom_[i].y1;
                 cInd.genom_[i].y2 = cSecondOne.genom_[i].y2;
-
             }
         }
     }
@@ -264,7 +255,6 @@ public class FpIndividual extends Individual {
                     fitness -= penalty * 3;
                 }
             }
-
         }
 
         // bounding box surface
@@ -299,21 +289,23 @@ public class FpIndividual extends Individual {
         colX = 0;
         colY = 0;
 
-        float cX = 0, cY = 0;
+        float cX, cY;
         for (int i = 0; i < genom_.length; i++) {
 
-            cX = genom_[i].x1 / (float) scWidth;
-            cY = genom_[i].y1 / (float) scHeight;
+            cX = (float) genom_[i].x1 / (float) scWidth;
+            cY = (float) genom_[i].y1 / (float) scHeight;
 
-            colX -= cX;
-            colY -= cY;
-
+            if (i % 2 == 0) {
+                colX += cX;
+                colY += cY;
+            } else {
+                colX -= cX;
+                colY -= cY;
+            }
         }
-        colX = colX / genom_.length;
-        colY = colY / genom_.length;
 
-        colX = Other.tanh(colX);
-        colY = Other.tanh(colY);
+        colX = Other.tanh(colX / genom_.length);
+        colY = Other.tanh(colY / genom_.length);
     }
 
     @Override

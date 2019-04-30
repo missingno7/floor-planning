@@ -4,6 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/playspace/personal/floor-planning/src/floorplanning/FloorPlanning.java</file>
+            <file>file:/C:/playspace/personal/floor-planning/src/floorplanning/Rectangle.java</file>
+            <file>file:/C:/playspace/personal/floor-planning/src/cellularevoalg/Population.java</file>
+            <file>file:/C:/playspace/personal/floor-planning/src/floorplanning/FpIndividual.java</file>
+            <file>file:/C:/playspace/personal/floor-planning/src/floorplanning/FpData.java</file>
             <file>file:/C:/playspace/personal/floor-planning/src/cellevotests/CellularEvoAlg.java</file>
             <file>file:/C:/playspace/personal/floor-planning/src/timemeasure/TimeCell.java</file>
         </group>
