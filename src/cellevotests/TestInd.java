@@ -104,8 +104,8 @@ public class TestInd extends Individual {
 
     @Override
     public void countColor() {
-        colX = val / 100000.0f;
-        colY = val / 400000.0f;
+        colX = val * val;
+        colY = val;
     }
 
     public int val;
