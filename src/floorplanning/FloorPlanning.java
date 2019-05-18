@@ -32,7 +32,7 @@ public class FloorPlanning {
 
         cfg.LoadConfig("config.txt");
 
-        FpData tstData = new FpData("squares.txt",cfg);
+        FpData tstData = new FpData("squares.txt", cfg);
         int perfectFitness = tstData.getPerfection();
 
         FpIndividual tstInd = new FpIndividual(tstData.scWidth, tstData.scHeight, tstData.height.length);
@@ -42,20 +42,16 @@ public class FloorPlanning {
 
         FpIndividual bestOne = (FpIndividual) pop.getBest();
 
-     
         while (true) {
             FpIndividual bestInd = (FpIndividual) pop.getBest();
 
             if (bestInd.fitness > bestOne.fitness) {
-
                 bestOne = (FpIndividual) bestInd.clone();
+                bestInd.Draw(tstData, indPath + "IGEN" + Integer.toString(pop.getGen()) + ".png");
 
-                    bestOne.Draw(tstData, indPath + "ALLBEST" + ".png");
-                    bestInd.Draw(tstData, indPath + "IGEN" + Integer.toString(pop.getGen()) + ".png");
-
-                    if (cfg.drawpop) {
-                        pop.paintPop(indPath + "GEN" + Integer.toString(pop.getGen()) + ".png");
-                    }
+                if (cfg.drawpop) {
+                    pop.paintPop(indPath + "GEN" + Integer.toString(pop.getGen()) + ".png");
+                }
             }
 
             System.out.println("GENERATION " + pop.getGen());

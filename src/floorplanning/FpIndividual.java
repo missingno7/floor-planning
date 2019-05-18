@@ -9,7 +9,6 @@ import cellularevoalg.IndData;
 import cellularevoalg.Individual;
 import cellularevoalg.Other;
 import cellularevoalg.PopConfig;
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -27,22 +26,21 @@ import javax.imageio.ImageIO;
 public class FpIndividual extends Individual {
 
     FpIndividual(int scWidth, int scHeight, int squares) {
+
         this.scWidth = scWidth;
         this.scHeight = scHeight;
         genom_ = new Rectangle[squares];
-        x_sorted_ = new int[squares];
+
         for (int i = 0; i < squares; i++) {
             genom_[i] = new Rectangle();
-            x_sorted_[i] = i;
         }
-        
-                // Expensive operation, will be called only once
+
+        // Expensive operation, will be called only once
         if (!init_) {
             flip_prob_ = PopConfig.getInstance().reg.getFloat("flipprob")[0];
             switch_prob_ = PopConfig.getInstance().reg.getFloat("switchprob")[0];
             init_ = true;
         }
-        
     }
 
     @Override
@@ -60,11 +58,16 @@ public class FpIndividual extends Individual {
 
         int attempts = 0;
 
+        /*flip_prob_ = rnd.nextFloat();
+        switch_prob_ = rnd.nextFloat();
+        mut_prob_ = rnd.nextFloat();
+        mut_amount_ = (float) rnd.nextGaussian();*/
         for (int i = 0; i < genom_.length; i++) {
 
-            boolean again = false;
+            boolean again;
+            boolean flip;
             do {
-                boolean flip = rnd.nextBoolean();
+                flip = rnd.nextBoolean();
 
                 genom_[i].x1 = Other.nextInt(rnd, 100, maxX - 100);
                 genom_[i].y1 = Other.nextInt(rnd, 100, maxY - 100);
@@ -110,64 +113,45 @@ public class FpIndividual extends Individual {
 
     @Override
     public void mutate(float amount, float probability, Random rnd) {
-        for (int i = 0; i < genom_.length; i++) {
-            
+
+        /*flip_prob_ += (float) rnd.nextGaussian() * probability;
+        switch_prob_ += (float) rnd.nextGaussian() * probability;
+        mut_prob_ += (float) rnd.nextGaussian() * probability;
+        mut_amount_ += (float) rnd.nextGaussian() * amount;*/
+        for (Rectangle genom_1 : genom_) {
             // Move
             if (rnd.nextFloat() < probability) {
-
                 float mutX = (float) rnd.nextGaussian() * amount;
-
-                if (genom_[i].x1 + mutX >= scWidth || genom_[i].x1 + mutX < 0) {
-                    genom_[i].x1 -= mutX;
-                    genom_[i].x2 -= mutX;
+                if (genom_1.x1 + mutX >= scWidth || genom_1.x1 + mutX < 0) {
+                    genom_1.x1 -= mutX;
+                    genom_1.x2 -= mutX;
                 } else {
-                    genom_[i].x1 += mutX;
-                    genom_[i].x2 += mutX;
+                    genom_1.x1 += mutX;
+                    genom_1.x2 += mutX;
                 }
-
                 float mutY = (float) (rnd.nextGaussian() * amount);
-
-                if (genom_[i].y1 + mutY >= scHeight || genom_[i].y1 + mutY < 0) {
-
-                    genom_[i].y1 -= mutY;
-                    genom_[i].y2 -= mutY;
+                if (genom_1.y1 + mutY >= scHeight || genom_1.y1 + mutY < 0) {
+                    genom_1.y1 -= mutY;
+                    genom_1.y2 -= mutY;
                 } else {
-                    genom_[i].y1 += mutY;
-                    genom_[i].y2 += mutY;
+                    genom_1.y1 += mutY;
+                    genom_1.y2 += mutY;
                 }
             }
-
             // Flip
             if (rnd.nextFloat() < flip_prob_) {
-                genom_[i].flip();
+                genom_1.flip();
             }
-
             //Switch
             if (rnd.nextFloat() < switch_prob_) {
                 int sw = Other.nextInt(rnd, 0, genom_.length - 1);
-
-                int tmpx = genom_[i].x1 - genom_[sw].x1;
-                genom_[i].x1 = genom_[i].x1 - tmpx;
-                genom_[i].x2 = genom_[i].x2 - tmpx;
-
-                int tmpy = genom_[i].y1 - genom_[sw].y1;
-                genom_[i].y1 = genom_[i].y1 - tmpy;
-                genom_[i].y2 = genom_[i].y2 - tmpy;
+                int tmpx = genom_1.x1 - genom_[sw].x1;
+                genom_1.x1 = genom_1.x1 - tmpx;
+                genom_1.x2 = genom_1.x2 - tmpx;
+                int tmpy = genom_1.y1 - genom_[sw].y1;
+                genom_1.y1 = genom_1.y1 - tmpy;
+                genom_1.y2 = genom_1.y2 - tmpy;
             }
-        }
-    }
-
-    void sortRects() {
-        // Insertion sort by x axis from left to right
-        for (int i = 1; i <= x_sorted_.length - 1; i++) {
-            int tmp = x_sorted_[i];
-            int j = i - 1;
-
-            while ((genom_[tmp].x1 < genom_[x_sorted_[j]].x1) && (j >= 0)) {
-                x_sorted_[j + 1] = x_sorted_[j];    //moves element forward
-                j = j - 1;
-            }
-            x_sorted_[j + 1] = tmp;    //insert element in proper place
         }
     }
 
@@ -177,6 +161,14 @@ public class FpIndividual extends Individual {
         FpIndividual cInd = (FpIndividual) ind;
         FpIndividual cSecondOne = (FpIndividual) secondOne;
 
+        /*float ratio = rnd.nextFloat();
+        cInd.flip_prob_ = ratio * flip_prob_ + (1 - ratio) * cSecondOne.flip_prob_;
+        ratio = rnd.nextFloat();
+        cInd.switch_prob_ = ratio * switch_prob_ + (1 - ratio) * cSecondOne.switch_prob_;
+        ratio = rnd.nextFloat();
+        cInd.mut_prob_ = ratio * mut_prob_ + (1 - ratio) * cSecondOne.mut_prob_;
+        ratio = rnd.nextFloat();
+        cInd.mut_amount_ = ratio * mut_amount_ + (1 - ratio) * cSecondOne.mut_amount_;*/
         for (int i = 0; i < genom_.length; i++) {
             if (rnd.nextBoolean()) {
                 cInd.genom_[i].x1 = genom_[i].x1;
@@ -206,28 +198,28 @@ public class FpIndividual extends Individual {
         FpIndividual fpInd = (FpIndividual) ind;
         for (int i = 0; i < genom_.length; i++) {
             genom_[i].copyTo(fpInd.genom_[i]);
-            System.arraycopy(fpInd.x_sorted_, 0, x_sorted_, 0, x_sorted_.length);
         }
 
         fpInd.fitness = fitness;
         fpInd.colX = colX;
         fpInd.colY = colY;
+        /*fpInd.flip_prob_=flip_prob_;
+        fpInd.switch_prob_=switch_prob_;
+        fpInd.mut_prob_=mut_prob_;
+        fpInd.mut_amount_=mut_amount_;*/
     }
 
     private boolean overlap2D(float ax1, float ay1, float ax2, float ay2, float bx1, float by1, float bx2, float by2) {
-        //return false;
-
         return !(bx2 <= ax1 || ax2 <= bx1 || by2 <= ay1 || ay2 <= by1);
-
     }
 
     public void moveToCenter() {
 
         int sumX = 0, sumY = 0;
 
-        for (int i = 0; i < genom_.length; i++) {
-            sumX += genom_[i].x1;
-            sumY += genom_[i].y1;
+        for (Rectangle genom_1 : genom_) {
+            sumX += genom_1.x1;
+            sumY += genom_1.y1;
         }
 
         sumX = sumX / genom_.length;
@@ -239,18 +231,17 @@ public class FpIndividual extends Individual {
         int moveX = sumX - centerX;
         int moveY = sumY - centerY;
 
-        for (int i = 0; i < genom_.length; i++) {
-            genom_[i].x1 -= moveX;
-            genom_[i].y1 -= moveY;
-            genom_[i].x2 -= moveX;
-            genom_[i].y2 -= moveY;
+        for (Rectangle genom_1 : genom_) {
+            genom_1.x1 -= moveX;
+            genom_1.y1 -= moveY;
+            genom_1.x2 -= moveX;
+            genom_1.y2 -= moveY;
         }
 
     }
 
     @Override
     public void countFitness(IndData data) {
-        // TODO COUNT FITNESS
         FpData fpData = (FpData) data;
 
         moveToCenter();
@@ -321,16 +312,14 @@ public class FpIndividual extends Individual {
     public String toString(IndData data) {
         String res = "";
 
-        for (int i = 0; i < genom_.length; i++) {
-            res += Integer.toString((int) genom_[i].x1) + "," + Integer.toString((int) genom_[i].y1) + "\n";
+        for (Rectangle genom_1 : genom_) {
+            res += Integer.toString((int) genom_1.x1) + "," + Integer.toString((int) genom_1.y1) + "\n";
         }
 
         return res;
     }
 
     public void Draw(IndData data, String filename) {
-        FpData fpData = (FpData) data;
-
         // bounding box surface
         float maxX = genom_[0].x2;
         float maxY = genom_[0].y2;
@@ -381,9 +370,10 @@ public class FpIndividual extends Individual {
     int scWidth, scHeight;
 
     Rectangle[] genom_;
-    int[] x_sorted_;
-    
+
     private static boolean init_;
     private static float flip_prob_;
     private static float switch_prob_;
+    private static float mut_prob_;
+    private static float mut_amount_;
 }
